@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Practice</title>
+    <%= csrf_meta_tags %>
+
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  </head>
+
+  <body>
+  <%= render partial: "layouts/header" %>
+  <% flash.each do |key,value| %>
+  <div id ="flash" class="container">
+    <a class ="close" data-dismis ="alert" >&#215</a>
+      <div class="alert alert-<%= key %>">
+      <%= value %>
+    </div>
+  </div>
+  <% end  %>
+    <%= yield %>
+  </body>
+  <script>
+  $(document).ready(function(){
+  	setTimeout(function(){
+  		$('#flash').fadeOut("slow")
+  	},5000)
+  })
+  </script>
+  <style type="text/css">
+   .container{
+     margin-top: 4%;
+  }
+
+  </style>
+</html>
