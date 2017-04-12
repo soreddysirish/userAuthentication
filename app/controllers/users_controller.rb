@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
 	before_action :check_user,only: [:index]
 	before_action :correct_user, only: [:edit,:update]
-  before_action :admin_user,only: [:destroy]
+  before_action :admin_user, only: [:destroy]
 
   def index
   	@users =User.paginate(page: params[:page],per_page:10)
@@ -14,12 +14,29 @@ class UsersController < ApplicationController
   def create 
     @user =User.new(user_params)
     if @user.save
+      binding.pry
+      UserMailer.registration_confirmation(@user).deliver_now
+      binding.pry
       flash[:success] ="User is successfully saved"
       redirect_to @user
     else
       render "new"
     end
   end
+
+  def confirm_email
+    user =User.find_by_confirm_token(params[:id])
+    binding.pry
+    if user
+       user.email_activate
+      flash[:success] ="u r account is confirmed"
+      redirect_to root_url
+    else
+      flash[:error] ='user doesnt exist'
+      redirect_to root_url
+    end
+  end
+
 
   def show
     @user =User.find(params[:id])
@@ -52,7 +69,7 @@ class UsersController < ApplicationController
 
   private
   def user_params
-  	params.require(:user).permit(:name,:email,:password,:password_confirmation)
+  	params.require(:user).permit(:name,:email,:password,:password_confirmation,:email_confirmed)
   end
 
   def check_user
